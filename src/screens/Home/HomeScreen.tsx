@@ -13,6 +13,7 @@ import { Text, Card, Button, IconButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import authService from '../../services/auth/authService';
 import bibleService from '../../services/api/bibleService';
+import { COLORS } from '../../constants';
 
 const { width } = Dimensions.get('window');
 
@@ -54,14 +55,14 @@ const HomeScreen: React.FC = () => {
             title: 'AI Chat Assistant',
             description: 'Ask questions about the Bible',
             icon: 'robot',
-            color: '#6200ee',
+            color: COLORS.primary,
             onPress: () => navigation.navigate('Chat' as never)
         },
         {
             title: 'Read Bible',
             description: 'Access multiple translations',
             icon: 'book-open-variant',
-            color: '#03dac6',
+            color: COLORS.secondary,
             onPress: () => navigation.navigate('Bible' as never)
         },
         {
@@ -183,11 +184,11 @@ const HomeScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5'
+        backgroundColor: COLORS.background
     },
     header: {
         padding: 20,
-        backgroundColor: '#6200ee'
+        backgroundColor: COLORS.primary
     },
     greeting: {
         fontSize: 28,
@@ -202,25 +203,25 @@ const styles = StyleSheet.create({
     },
     verseCard: {
         margin: 16,
-        backgroundColor: '#fff',
+        backgroundColor: COLORS.surface,
         elevation: 4
     },
     verseTitle: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: '#6200ee',
+        color: COLORS.primary,
         marginBottom: 12
     },
     verseText: {
         fontSize: 18,
         lineHeight: 28,
-        color: '#333',
+        color: COLORS.text,
         marginBottom: 8,
         fontStyle: 'italic'
     },
     verseReference: {
         fontSize: 14,
-        color: '#666',
+        color: COLORS.textSecondary,
         textAlign: 'right'
     },
     section: {
@@ -229,7 +230,7 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: '#333',
+        color: COLORS.text,
         marginBottom: 12
     },
     featuresGrid: {
@@ -239,7 +240,7 @@ const styles = StyleSheet.create({
     },
     featureCard: {
         width: (width - 48) / 2,
-        backgroundColor: '#fff',
+        backgroundColor: COLORS.surface,
         borderRadius: 12,
         padding: 16,
         marginBottom: 16,
@@ -257,17 +258,17 @@ const styles = StyleSheet.create({
     featureTitle: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: '#333',
+        color: COLORS.text,
         marginBottom: 4,
         textAlign: 'center'
     },
     featureDesc: {
         fontSize: 12,
-        color: '#666',
+        color: COLORS.textSecondary,
         textAlign: 'center'
     },
     readingCard: {
-        backgroundColor: '#fff',
+        backgroundColor: COLORS.surface,
         elevation: 2
     },
     readingHeader: {
@@ -278,15 +279,15 @@ const styles = StyleSheet.create({
     readingTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#333'
+        color: COLORS.text
     },
     readingProgress: {
         fontSize: 14,
-        color: '#666',
+        color: COLORS.textSecondary,
         marginTop: 4
     },
     topicChip: {
-        backgroundColor: '#6200ee',
+        backgroundColor: COLORS.primary,
         paddingHorizontal: 20,
         paddingVertical: 10,
         borderRadius: 20,
@@ -304,7 +305,7 @@ const styles = StyleSheet.create({
     },
     statCard: {
         alignItems: 'center',
-        backgroundColor: '#fff',
+        backgroundColor: COLORS.surface,
         padding: 16,
         borderRadius: 12,
         flex: 1,
@@ -314,11 +315,11 @@ const styles = StyleSheet.create({
     statNumber: {
         fontSize: 32,
         fontWeight: 'bold',
-        color: '#6200ee'
+        color: COLORS.primary
     },
     statLabel: {
         fontSize: 12,
-        color: '#666',
+        color: COLORS.textSecondary,
         marginTop: 4
     }
 });

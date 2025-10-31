@@ -1,3 +1,4 @@
+
 // src/navigation/AppNavigator.tsx
 
 import React, { useState, useEffect } from 'react';
@@ -6,15 +7,21 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { IconButton } from 'react-native-paper';
 import authService from '../services/auth/authService';
+import { useUserStore } from '../stores/userStore';
+import { COLORS } from '../constants';
 
 // Import screens
 import LoginScreen from '../screens/Auth/LoginScreen';
 import RegisterScreen from '../screens/Auth/RegisterScreen';
 import HomeScreen from '../screens/Home/HomeScreen';
 import BibleScreen from '../screens/Bible/BibleScreen';
+import BibleReaderScreen from '../screens/Bible/BibleReaderScreen';
 import ChatScreen from '../screens/Chat/ChatScreen';
 import ProfileScreen from '../screens/Profile/ProfileScreen';
 import SettingsScreen from '../screens/Settings/SettingsScreen';
+import ReadingHistoryScreen from '../screens/Profile/ReadingHistoryScreen';
+import BookmarksScreen from '../screens/Profile/BookmarksScreen';
+import HighlightsScreen from '../screens/Profile/HighlightsScreen';
 
 import { RootStackParamList, MainTabParamList } from '../types';
 
@@ -47,10 +54,10 @@ const MainTabs: React.FC = () => {
 
                     return <IconButton icon={iconName} size={size} iconColor={color} />;
                 },
-                tabBarActiveTintColor: '#6200ee',
+                tabBarActiveTintColor: COLORS.primary,
                 tabBarInactiveTintColor: 'gray',
                 headerStyle: {
-                    backgroundColor: '#6200ee'
+                    backgroundColor: COLORS.primary
                 },
                 headerTintColor: '#fff',
                 headerTitleStyle: {
@@ -68,9 +75,9 @@ const MainTabs: React.FC = () => {
                 component={BibleScreen}
                 options={{ title: 'Bible' }}
             />
-            <Tab.Screen
-                name="Chat"
-                component={ChatScreen}
+            <Tab.Screen 
+                name="Chat" 
+                component={ChatScreen} 
                 options={{ title: 'AI Chat' }}
             />
             <Tab.Screen
@@ -102,9 +109,10 @@ const AppNavigator: React.FC = () => {
     return (
         <NavigationContainer>
             <Stack.Navigator
+                initialRouteName={isAuthenticated ? "Main" : "Login"}
                 screenOptions={{
                     headerStyle: {
-                        backgroundColor: '#6200ee'
+                        backgroundColor: COLORS.primary
                     },
                     headerTintColor: '#fff',
                     headerTitleStyle: {
@@ -113,7 +121,7 @@ const AppNavigator: React.FC = () => {
                 }}
             >
                 {!isAuthenticated ? (
-                    <>
+                    <Stack.Group>
                         <Stack.Screen
                             name="Login"
                             component={LoginScreen}
@@ -124,20 +132,39 @@ const AppNavigator: React.FC = () => {
                             component={RegisterScreen}
                             options={{ title: 'Create Account' }}
                         />
-                    </>
+                    </Stack.Group>
                 ) : (
-                    <>
+                    <Stack.Group>
                         <Stack.Screen
                             name="Main"
                             component={MainTabs}
                             options={{ headerShown: false }}
+                        />
+                        <Stack.Screen<'BibleReader'>
+                            name="BibleReader"
+                            component={BibleReaderScreen}
                         />
                         <Stack.Screen
                             name="Settings"
                             component={SettingsScreen}
                             options={{ title: 'Settings' }}
                         />
-                    </>
+                        <Stack.Screen
+                            name="ReadingHistory"
+                            component={ReadingHistoryScreen}
+                            options={{ title: 'Reading History' }}
+                        />
+                        <Stack.Screen
+                            name="Bookmarks"
+                            component={BookmarksScreen}
+                            options={{ title: 'Bookmarks' }}
+                        />
+                        <Stack.Screen
+                            name="Highlights"
+                            component={HighlightsScreen}
+                            options={{ title: 'Highlights' }}
+                        />
+                    </Stack.Group>
                 )}
             </Stack.Navigator>
         </NavigationContainer>

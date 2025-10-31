@@ -11,16 +11,18 @@ import {
     ActivityIndicator
 } from 'react-native';
 import { Text, TextInput, IconButton } from 'react-native-paper';
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { useChatStore } from '../../stores/chatStore';
+import { useUserStore } from '../../stores/userStore';
 import speechService from '../../services/speech/speechService';
-import { ChatMessage } from '../../types';
+import { ChatMessage, MainTabParamList } from '../../types';
+import { COLORS } from '../../constants';
 
-interface ChatScreenProps {
-    userId: string;
-    userLanguage: string;
-}
+const ChatScreen: React.FC<BottomTabScreenProps<MainTabParamList, 'Chat'>> = () => {
+    const { user } = useUserStore();
+    const userId = user?.id || '';
+    const userLanguage = user?.language || 'en';
 
-const ChatScreen: React.FC<ChatScreenProps> = ({ userId, userLanguage }) => {
     const [inputText, setInputText] = useState('');
     const [isRecording, setIsRecording] = useState(false);
     const flatListRef = useRef<FlatList>(null);
@@ -35,7 +37,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ userId, userLanguage }) => {
     } = useChatStore();
 
     useEffect(() => {
-        if (!currentSession) {
+        if (!currentSession && userId) {
             createSession(userId);
         }
 
@@ -54,7 +56,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ userId, userLanguage }) => {
         return () => {
             speechService.destroy();
         };
-    }, []);
+    }, [userId]);
 
     useEffect(() => {
         if (currentSession?.messages.length) {
@@ -125,7 +127,16 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ userId, userLanguage }) => {
             ]}
         >
             <View style={styles.messageContent}>
-                <Text style={styles.messageText}>{item.content}</Text>
+                <Text
+                    style={[
+                        styles.messageText,
+                        {
+                            color: item.role === 'user' ? '#fff' : COLORS.text
+                        }
+                    ]}
+                >
+                    {item.content}
+                </Text>
                 {item.role === 'assistant' && (
                     <IconButton
                         icon="volume-high"
@@ -134,7 +145,12 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ userId, userLanguage }) => {
                     />
                 )}
             </View>
-            <Text style={styles.timestamp}>
+            <Text
+                style={[
+                    styles.timestamp,
+                    { color: item.role === 'user' ? '#eee' : COLORS.textSecondary }
+                ]}
+            >
                 {new Date(item.timestamp).toLocaleTimeString()}
             </Text>
         </View>
@@ -173,7 +189,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ userId, userLanguage }) => {
 
             {isLoading && (
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="small" color="#6200ee" />
+                    <ActivityIndicator size="small" color={COLORS.primary} />
                     <Text style={styles.loadingText}>Thinking...</Text>
                 </View>
             )}
@@ -213,11 +229,11 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ userId, userLanguage }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5'
+        backgroundColor: COLORS.background
     },
     header: {
         padding: 16,
-        backgroundColor: '#6200ee',
+        backgroundColor: COLORS.primary,
         alignItems: 'center'
     },
     headerTitle: {
@@ -240,7 +256,7 @@ const styles = StyleSheet.create({
     },
     errorText: {
         flex: 1,
-        color: '#c62828'
+        color: COLORS.error
     },
     messageList: {
         padding: 16,
@@ -254,11 +270,11 @@ const styles = StyleSheet.create({
     },
     userMessage: {
         alignSelf: 'flex-end',
-        backgroundColor: '#6200ee'
+        backgroundColor: COLORS.primary
     },
     assistantMessage: {
         alignSelf: 'flex-start',
-        backgroundColor: '#fff',
+        backgroundColor: COLORS.surface,
         elevation: 2
     },
     messageContent: {
@@ -272,7 +288,6 @@ const styles = StyleSheet.create({
     },
     timestamp: {
         fontSize: 12,
-        color: '#666',
         marginTop: 4
     },
     loadingContainer: {
@@ -283,14 +298,14 @@ const styles = StyleSheet.create({
     },
     loadingText: {
         marginLeft: 8,
-        color: '#666'
+        color: COLORS.textSecondary
     },
     inputContainer: {
         flexDirection: 'row',
         padding: 8,
-        backgroundColor: '#fff',
+        backgroundColor: COLORS.surface,
         borderTopWidth: 1,
-        borderTopColor: '#e0e0e0',
+        borderTopColor: COLORS.border,
         alignItems: 'flex-end'
     },
     input: {
@@ -302,19 +317,19 @@ const styles = StyleSheet.create({
         width: 48,
         height: 48,
         borderRadius: 24,
-        backgroundColor: '#6200ee',
+        backgroundColor: COLORS.primary,
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 8
     },
     recordingButton: {
-        backgroundColor: '#c62828'
+        backgroundColor: COLORS.error
     },
     sendButton: {
         width: 48,
         height: 48,
         borderRadius: 24,
-        backgroundColor: '#6200ee',
+        backgroundColor: COLORS.primary,
         justifyContent: 'center',
         alignItems: 'center'
     },

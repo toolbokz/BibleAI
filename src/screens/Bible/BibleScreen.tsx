@@ -1,5 +1,3 @@
-// src/screens/Bible/BibleScreen.tsx
-
 import React, { useState, useEffect } from 'react';
 import {
     View,
@@ -10,11 +8,14 @@ import {
 } from 'react-native';
 import { Text, Searchbar, Menu, Button, Divider } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import bibleService from '../../services/api/bibleService';
-import { BibleVersion, BibleBook } from '../../types';
+import { BibleVersion, BibleBook, RootStackParamList, MainTabParamList } from '../../types';
+import { COLORS } from '../../constants';
 
-const BibleScreen: React.FC = () => {
-    const navigation = useNavigation();
+const BibleScreen: React.FC<BottomTabScreenProps<MainTabParamList, 'Bible'>> = () => {
+    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const [versions, setVersions] = useState<BibleVersion[]>([]);
     const [selectedVersion, setSelectedVersion] = useState<BibleVersion | null>(null);
     const [books, setBooks] = useState<BibleBook[]>([]);
@@ -82,11 +83,11 @@ const BibleScreen: React.FC = () => {
     };
 
     const handleBookPress = (book: BibleBook) => {
-        navigation.navigate('BibleReader' as never, {
+        navigation.navigate('BibleReader', {
             bookId: book.id,
             chapter: 1,
             versionId: selectedVersion?.id
-        } as never);
+        });
     };
 
     const renderBook = ({ item }: { item: BibleBook }) => (
@@ -197,7 +198,7 @@ const BibleScreen: React.FC = () => {
             {/* Books List */}
             {isLoading ? (
                 <View style={styles.centerContainer}>
-                    <ActivityIndicator size="large" color="#6200ee" />
+                    <ActivityIndicator size="large" color={COLORS.primary} />
                     <Text style={styles.loadingText}>Loading books...</Text>
                 </View>
             ) : (
@@ -216,13 +217,13 @@ const BibleScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5'
+        backgroundColor: COLORS.background
     },
     header: {
         padding: 16,
-        backgroundColor: '#fff',
+        backgroundColor: COLORS.surface,
         borderBottomWidth: 1,
-        borderBottomColor: '#e0e0e0'
+        borderBottomColor: COLORS.border
     },
     searchBar: {
         margin: 16,
@@ -238,19 +239,19 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         paddingHorizontal: 12,
         borderRadius: 20,
-        backgroundColor: '#fff',
+        backgroundColor: COLORS.surface,
         marginHorizontal: 4,
         alignItems: 'center',
         borderWidth: 1,
-        borderColor: '#e0e0e0'
+        borderColor: COLORS.border
     },
     activeFilter: {
-        backgroundColor: '#6200ee',
-        borderColor: '#6200ee'
+        backgroundColor: COLORS.primary,
+        borderColor: COLORS.primary
     },
     filterText: {
         fontSize: 12,
-        color: '#666',
+        color: COLORS.textSecondary,
         fontWeight: '600'
     },
     activeFilterText: {
@@ -264,7 +265,7 @@ const styles = StyleSheet.create({
     loadingText: {
         marginTop: 16,
         fontSize: 16,
-        color: '#666'
+        color: COLORS.textSecondary
     },
     listContainer: {
         padding: 8
@@ -274,7 +275,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: '#fff',
+        backgroundColor: COLORS.surface,
         borderRadius: 12,
         padding: 16,
         margin: 8,
@@ -286,18 +287,18 @@ const styles = StyleSheet.create({
     bookName: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: '#333',
+        color: COLORS.text,
         marginBottom: 4
     },
     bookChapters: {
         fontSize: 12,
-        color: '#666'
+        color: COLORS.textSecondary
     },
     testament: {
         fontSize: 12,
         fontWeight: 'bold',
-        color: '#6200ee',
-        backgroundColor: '#f0e6ff',
+        color: COLORS.primary,
+        backgroundColor: COLORS.primaryLight + '33', // Add alpha for transparency
         paddingHorizontal: 8,
         paddingVertical: 4,
         borderRadius: 12

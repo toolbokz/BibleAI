@@ -9,38 +9,36 @@ import {
     ActivityIndicator
 } from 'react-native';
 import { Text, IconButton, Menu, Divider } from 'react-native-paper';
+import { StackScreenProps } from '@react-navigation/stack';
+import { RootStackParamList } from '../../types';
 import bibleService from '../../services/api/bibleService';
 import speechService from '../../services/speech/speechService';
-import { BibleVerse, BibleVersion } from '../../types';
+import { BibleVerse } from '../../types';
+import { COLORS } from '../../constants';
+import { useUserStore } from '../../stores/userStore';
 
-interface BibleReaderScreenProps {
-    bookId: string;
-    chapter: number;
-    versionId: string;
-    onChapterChange: (chapter: number) => void;
-}
+type Props = StackScreenProps<RootStackParamList, 'BibleReader'>;
 
-const BibleReaderScreen: React.FC<BibleReaderScreenProps> = ({
-    bookId,
-    chapter,
-    versionId,
-    onChapterChange
-}) => {
+const BibleReaderScreen: React.FC<Props> = ({ route, navigation }) => {
+    const { bookId, chapter, versionId } = route.params;
     const [verses, setVerses] = useState<BibleVerse[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [fontSize, setFontSize] = useState(16);
     const [menuVisible, setMenuVisible] = useState(false);
     const [isReading, setIsReading] = useState(false);
+    const { user } = useUserStore();
 
     useEffect(() => {
         loadChapter();
+        navigation.setOptions({ title: `${bookId} ${chapter}` });
     }, [bookId, chapter, versionId]);
 
     const loadChapter = async () => {
         try {
             setIsLoading(true);
+            const resolvedVersionId = versionId || user?.preferredBibleVersion || 'de4e12af7f28f599-02';
             const chapterVerses = await bibleService.getChapter(
-                versionId,
+                resolvedVersionId,
                 bookId,
                 chapter
             );
@@ -64,7 +62,7 @@ const BibleReaderScreen: React.FC<BibleReaderScreenProps> = ({
 
         try {
             await speechService.speak(text, {
-                language: 'en-US',
+                language: user?.language || 'en-US',
                 pitch: 1.0,
                 rate: 0.5,
                 volume: 1.0
@@ -90,18 +88,24 @@ const BibleReaderScreen: React.FC<BibleReaderScreenProps> = ({
 
     const goToPreviousChapter = () => {
         if (chapter > 1) {
-            onChapterChange(chapter - 1);
+            navigation.replace('BibleReader', {
+                ...route.params,
+                chapter: chapter - 1
+            });
         }
     };
 
     const goToNextChapter = () => {
-        onChapterChange(chapter + 1);
+        navigation.replace('BibleReader', {
+            ...route.params,
+            chapter: chapter + 1
+        });
     };
 
     if (isLoading) {
         return (
             <View style={styles.centerContainer}>
-                <ActivityIndicator size="large" color="#6200ee" />
+                <ActivityIndicator size="large" color={COLORS.primary} />
                 <Text style={styles.loadingText}>Loading chapter...</Text>
             </View>
         );
@@ -179,7 +183,7 @@ const BibleReaderScreen: React.FC<BibleReaderScreenProps> = ({
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff'
+        backgroundColor: COLORS.background
     },
     centerContainer: {
         flex: 1,
@@ -189,7 +193,7 @@ const styles = StyleSheet.create({
     loadingText: {
         marginTop: 16,
         fontSize: 16,
-        color: '#666'
+        color: COLORS.textSecondary
     },
     toolbar: {
         flexDirection: 'row',
@@ -197,9 +201,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 8,
         paddingVertical: 4,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: COLORS.surface,
         borderBottomWidth: 1,
-        borderBottomColor: '#e0e0e0'
+        borderBottomColor: COLORS.border
     },
     toolbarLeft: {
         flexDirection: 'row',
@@ -225,7 +229,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 24,
         textAlign: 'center',
-        color: '#333'
+        color: COLORS.text
     },
     verseContainer: {
         flexDirection: 'row',
@@ -234,7 +238,7 @@ const styles = StyleSheet.create({
     verseNumber: {
         fontSize: 12,
         fontWeight: 'bold',
-        color: '#6200ee',
+        color: COLORS.primary,
         marginRight: 8,
         marginTop: 2,
         minWidth: 24
@@ -242,16 +246,16 @@ const styles = StyleSheet.create({
     verseText: {
         flex: 1,
         lineHeight: 24,
-        color: '#333'
+        color: COLORS.text
     },
     navigation: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: 8,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: COLORS.surface,
         borderTopWidth: 1,
-        borderTopColor: '#e0e0e0'
+        borderTopColor: COLORS.border
     },
     navButton: {
         flexDirection: 'row',
@@ -264,7 +268,7 @@ const styles = StyleSheet.create({
     chapterIndicator: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: '#6200ee'
+        color: COLORS.primary
     }
 });
 

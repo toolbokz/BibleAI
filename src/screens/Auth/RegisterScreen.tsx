@@ -9,17 +9,14 @@ import {
     ScrollView
 } from 'react-native';
 import { Text, TextInput, Button, HelperText, Checkbox } from 'react-native-paper';
+import { StackScreenProps } from '@react-navigation/stack';
+import { RootStackParamList } from '../../types';
 import authService from '../../services/auth/authService';
+import { COLORS } from '../../constants';
 
-interface RegisterScreenProps {
-    onRegisterSuccess: () => void;
-    onNavigateToLogin: () => void;
-}
+type Props = StackScreenProps<RootStackParamList, 'Register'>;
 
-const RegisterScreen: React.FC<RegisterScreenProps> = ({
-    onRegisterSuccess,
-    onNavigateToLogin
-}) => {
+const RegisterScreen: React.FC<Props> = ({ navigation }) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -71,7 +68,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({
         try {
             setIsLoading(true);
             await authService.signUp(email, password, name);
-            onRegisterSuccess();
+            // onRegisterSuccess is handled by the auth state listener in AppNavigator
         } catch (err: any) {
             setError(err.message || 'Failed to create account');
         } finally {
@@ -179,7 +176,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({
 
                     <View style={styles.loginContainer}>
                         <Text style={styles.loginText}>Already have an account? </Text>
-                        <Button mode="text" onPress={onNavigateToLogin}>
+                        <Button mode="text" onPress={() => navigation.navigate('Login')}>
                             Login
                         </Button>
                     </View>
@@ -220,7 +217,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff'
+        backgroundColor: COLORS.background
     },
     scrollContent: {
         padding: 24
@@ -231,12 +228,12 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 28,
         fontWeight: 'bold',
-        color: '#6200ee',
+        color: COLORS.primary,
         marginBottom: 8
     },
     subtitle: {
         fontSize: 16,
-        color: '#666'
+        color: COLORS.textSecondary
     },
     form: {
         width: '100%',
@@ -253,10 +250,10 @@ const styles = StyleSheet.create({
     checkboxText: {
         flex: 1,
         fontSize: 14,
-        color: '#666'
+        color: COLORS.textSecondary
     },
     link: {
-        color: '#6200ee',
+        color: COLORS.primary,
         fontWeight: '600'
     },
     registerButton: {
@@ -271,17 +268,17 @@ const styles = StyleSheet.create({
     },
     loginText: {
         fontSize: 14,
-        color: '#666'
+        color: COLORS.textSecondary
     },
     benefits: {
-        backgroundColor: '#f5f5f5',
+        backgroundColor: COLORS.surface,
         borderRadius: 12,
         padding: 16
     },
     benefitsTitle: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: '#333',
+        color: COLORS.text,
         marginBottom: 12
     },
     benefitItem: {
@@ -291,12 +288,12 @@ const styles = StyleSheet.create({
     },
     benefitIcon: {
         fontSize: 20,
-        color: '#6200ee',
+        color: COLORS.primary,
         marginRight: 12
     },
     benefitText: {
         fontSize: 14,
-        color: '#666'
+        color: COLORS.textSecondary
     }
 });
 

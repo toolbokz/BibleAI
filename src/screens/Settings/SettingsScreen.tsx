@@ -13,11 +13,13 @@ import {
     Button
 } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AppSettings } from '../../types';
+import { StackScreenProps } from '@react-navigation/stack';
+import { AppSettings, RootStackParamList } from '../../types';
+import { COLORS } from '../../constants';
 
 const SETTINGS_KEY = '@app_settings';
 
-const SettingsScreen: React.FC = () => {
+const SettingsScreen: React.FC<StackScreenProps<RootStackParamList, 'Settings'>> = () => {
     const [settings, setSettings] = useState<AppSettings>({
         theme: 'auto',
         fontSize: 'medium',
@@ -341,16 +343,16 @@ const SettingsScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5'
+        backgroundColor: COLORS.background
     },
     section: {
         marginTop: 16,
-        backgroundColor: '#fff'
+        backgroundColor: COLORS.surface
     },
     sectionTitle: {
         fontSize: 14,
         fontWeight: 'bold',
-        color: '#666',
+        color: COLORS.primary,
         padding: 16,
         paddingBottom: 8,
         textTransform: 'uppercase'

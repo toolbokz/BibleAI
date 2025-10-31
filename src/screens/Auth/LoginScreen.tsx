@@ -7,20 +7,18 @@ import {
     KeyboardAvoidingView,
     Platform,
     TouchableOpacity,
-    Image
+    Image,
+    Alert
 } from 'react-native';
 import { Text, TextInput, Button, HelperText } from 'react-native-paper';
+import { StackScreenProps } from '@react-navigation/stack';
+import { RootStackParamList } from '../../types';
 import authService from '../../services/auth/authService';
+import { COLORS } from '../../constants';
 
-interface LoginScreenProps {
-    onLoginSuccess: () => void;
-    onNavigateToRegister: () => void;
-}
+type Props = StackScreenProps<RootStackParamList, 'Login'>;
 
-const LoginScreen: React.FC<LoginScreenProps> = ({
-    onLoginSuccess,
-    onNavigateToRegister
-}) => {
+const LoginScreen: React.FC<Props> = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -48,7 +46,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
         try {
             setIsLoading(true);
             await authService.signIn(email, password);
-            onLoginSuccess();
+            // onLoginSuccess is handled by the auth state listener in AppNavigator
         } catch (err: any) {
             setError(err.message || 'Failed to login');
         } finally {
@@ -71,7 +69,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
             setIsLoading(true);
             await authService.resetPassword(email);
             setError('');
-            alert('Password reset email sent! Check your inbox.');
+            Alert.alert('Success', 'Password reset email sent! Check your inbox.');
         } catch (err: any) {
             setError(err.message || 'Failed to send reset email');
         } finally {
@@ -79,8 +77,15 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
         }
     };
 
-    const handleGuestAccess = () => {
-        onLoginSuccess();
+    const handleGuestAccess = async () => {
+        try {
+            setIsLoading(true);
+            await authService.signInAnonymously();
+            // onLoginSuccess is handled by the auth state listener in AppNavigator
+        } catch (err: any) {
+            setError(err.message || 'Failed to continue as guest');
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -159,7 +164,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
 
                     <Button
                         mode="outlined"
-                        onPress={onNavigateToRegister}
+                        onPress={() => navigation.navigate('Register')}
                         style={styles.registerButton}
                     >
                         Create New Account
@@ -169,6 +174,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                         mode="text"
                         onPress={handleGuestAccess}
                         style={styles.guestButton}
+                        loading={isLoading}
+                        disabled={isLoading}
                     >
                         Continue as Guest
                     </Button>
@@ -185,7 +192,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff'
+        backgroundColor: COLORS.background
     },
     content: {
         flex: 1,
@@ -204,12 +211,12 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 32,
         fontWeight: 'bold',
-        color: '#6200ee',
+        color: COLORS.primary,
         marginBottom: 8
     },
     subtitle: {
         fontSize: 16,
-        color: '#666',
+        color: COLORS.textSecondary,
         textAlign: 'center'
     },
     form: {
@@ -223,7 +230,7 @@ const styles = StyleSheet.create({
         paddingVertical: 8
     },
     forgotPassword: {
-        color: '#6200ee',
+        color: COLORS.primary,
         textAlign: 'center',
         marginTop: 16,
         fontSize: 14
@@ -236,11 +243,11 @@ const styles = StyleSheet.create({
     dividerLine: {
         flex: 1,
         height: 1,
-        backgroundColor: '#e0e0e0'
+        backgroundColor: COLORS.border
     },
     dividerText: {
         marginHorizontal: 16,
-        color: '#666',
+        color: COLORS.textSecondary,
         fontSize: 14
     },
     registerButton: {

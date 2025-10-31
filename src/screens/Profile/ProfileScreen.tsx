@@ -19,11 +19,14 @@ import {
     TextInput
 } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import authService from '../../services/auth/authService';
-import { User } from '../../types';
+import { User, RootStackParamList, MainTabParamList } from '../../types';
+import { COLORS } from '../../constants';
 
-const ProfileScreen: React.FC = () => {
-    const navigation = useNavigation();
+const ProfileScreen: React.FC<BottomTabScreenProps<MainTabParamList, 'Profile'>> = () => {
+    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [editDialogVisible, setEditDialogVisible] = useState(false);
@@ -168,7 +171,7 @@ const ProfileScreen: React.FC = () => {
                         description="View your reading progress"
                         left={(props) => <List.Icon {...props} icon="history" />}
                         right={(props) => <List.Icon {...props} icon="chevron-right" />}
-                        onPress={() => { }}
+                        onPress={() => navigation.navigate('ReadingHistory')}
                     />
                     <Divider />
                     <List.Item
@@ -176,7 +179,7 @@ const ProfileScreen: React.FC = () => {
                         description="Your saved verses"
                         left={(props) => <List.Icon {...props} icon="bookmark" />}
                         right={(props) => <List.Icon {...props} icon="chevron-right" />}
-                        onPress={() => { }}
+                        onPress={() => navigation.navigate('Bookmarks')}
                     />
                     <Divider />
                     <List.Item
@@ -184,7 +187,7 @@ const ProfileScreen: React.FC = () => {
                         description="Highlighted passages"
                         left={(props) => <List.Icon {...props} icon="marker" />}
                         right={(props) => <List.Icon {...props} icon="chevron-right" />}
-                        onPress={() => { }}
+                        onPress={() => navigation.navigate('Highlights')}
                     />
                     <Divider />
                     <List.Item
@@ -192,7 +195,7 @@ const ProfileScreen: React.FC = () => {
                         description="Your study notes"
                         left={(props) => <List.Icon {...props} icon="notebook" />}
                         right={(props) => <List.Icon {...props} icon="chevron-right" />}
-                        onPress={() => { }}
+                        onPress={() => { /* Implement navigation to Notes screen */ }}
                     />
                 </List.Section>
             </View>
@@ -206,7 +209,7 @@ const ProfileScreen: React.FC = () => {
                         description="App preferences"
                         left={(props) => <List.Icon {...props} icon="cog" />}
                         right={(props) => <List.Icon {...props} icon="chevron-right" />}
-                        onPress={() => navigation.navigate('Settings' as never)}
+                        onPress={() => navigation.navigate('Settings')}
                     />
                     <Divider />
                     <List.Item
@@ -214,7 +217,7 @@ const ProfileScreen: React.FC = () => {
                         description={user?.language || 'English'}
                         left={(props) => <List.Icon {...props} icon="translate" />}
                         right={(props) => <List.Icon {...props} icon="chevron-right" />}
-                        onPress={() => { }}
+                        onPress={() => {}}
                     />
                     <Divider />
                     <List.Item
@@ -222,7 +225,7 @@ const ProfileScreen: React.FC = () => {
                         description={user?.preferredBibleVersion || 'KJV'}
                         left={(props) => <List.Icon {...props} icon="book-open-variant" />}
                         right={(props) => <List.Icon {...props} icon="chevron-right" />}
-                        onPress={() => { }}
+                        onPress={() => {}}
                     />
                 </List.Section>
             </View>
@@ -239,7 +242,7 @@ const ProfileScreen: React.FC = () => {
                 <Button
                     mode="text"
                     onPress={handleDeleteAccount}
-                    textColor="#c62828"
+                    textColor={COLORS.error}
                     style={styles.deleteButton}
                 >
                     Delete Account
@@ -274,7 +277,7 @@ const ProfileScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5'
+        backgroundColor: COLORS.background
     },
     centerContainer: {
         flex: 1,
@@ -282,7 +285,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     header: {
-        backgroundColor: '#6200ee',
+        backgroundColor: COLORS.primary,
         padding: 24,
         alignItems: 'center'
     },
@@ -320,7 +323,7 @@ const styles = StyleSheet.create({
     },
     statsContainer: {
         flexDirection: 'row',
-        backgroundColor: '#fff',
+        backgroundColor: COLORS.surface,
         padding: 16,
         justifyContent: 'space-around'
     },
@@ -331,25 +334,25 @@ const styles = StyleSheet.create({
     statNumber: {
         fontSize: 28,
         fontWeight: 'bold',
-        color: '#6200ee',
+        color: COLORS.primary,
         marginBottom: 4
     },
     statLabel: {
         fontSize: 12,
-        color: '#666'
+        color: COLORS.textSecondary
     },
     statDivider: {
         width: 1,
-        backgroundColor: '#e0e0e0'
+        backgroundColor: COLORS.border
     },
     section: {
         marginTop: 16,
-        backgroundColor: '#fff'
+        backgroundColor: COLORS.surface
     },
     sectionTitle: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: '#666',
+        color: COLORS.textSecondary,
         padding: 16,
         paddingBottom: 8
     },

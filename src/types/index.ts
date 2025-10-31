@@ -1,3 +1,4 @@
+
 // src/types/index.ts
 
 export interface User {
@@ -72,10 +73,13 @@ export type RootStackParamList = {
     Login: undefined;
     Register: undefined;
     Main: undefined;
-    BibleReader: { book: string; chapter: number };
+    BibleReader: { bookId: string; chapter: number, versionId: string | undefined };
     ChatDetail: { sessionId?: string };
     Settings: undefined;
     Profile: undefined;
+    ReadingHistory: undefined;
+    Bookmarks: undefined;
+    Highlights: undefined;
 };
 
 export type MainTabParamList = {

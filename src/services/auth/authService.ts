@@ -47,6 +47,27 @@ class AuthService {
         }
     }
 
+    async signInAnonymously(): Promise<User> {
+        try {
+            const userCredential = await auth().signInAnonymously();
+            const user: User = {
+                id: userCredential.user.uid,
+                email: 'guest@email.com',
+                name: 'Guest',
+                language: 'en',
+                preferredBibleVersion: 'de4e12af7f28f599-02',
+                isPremium: false,
+                createdAt: new Date()
+            };
+
+            await firestore().collection('users').doc(user.id).set(user);
+            return user;
+        } catch (error: any) {
+            console.error('Anonymous Sign In Error:', error);
+            throw new Error('Failed to sign in anonymously');
+        }
+    }
+
     async signOut(): Promise<void> {
         try {
             await auth().signOut();
